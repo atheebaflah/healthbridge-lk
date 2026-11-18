@@ -1,0 +1,24 @@
+{
+  "patients": [
+    { "barcode": "CSTH-000101", "phn": "09900000011", "fullName": "Nimal Perera", "dob": "14/03/1985", "gender": "M", "bloodGroup": "O+", "allergies": ["Penicillin"] },
+    { "barcode": "CSTH-000102", "phn": "09900000029", "fullName": "Shanthi Fernando", "dob": "02/11/1972", "gender": "F", "bloodGroup": "A+", "allergies": [] },
+    { "barcode": "CSTH-000103", "phn": "09900000037", "fullName": "Mohamed Rizwan", "dob": "21/07/1990", "gender": "M", "bloodGroup": "B+", "allergies": ["Sulfa drugs"] },
+    { "barcode": "CSTH-000104", "phn": "09900000045", "fullName": "Kavitha Selvaraj", "dob": "09/05/1998", "gender": "F", "bloodGroup": "AB-", "allergies": [] }
+  ],
+  "visits": [
+    { "visitId": "V-1001", "barcode": "CSTH-000101", "date": "05/09/2026", "department": "Medical Clinic", "doctor": "Dr. A. Silva", "diagnosis": "Type 2 diabetes" },
+    { "visitId": "V-1002", "barcode": "CSTH-000102", "date": "12/09/2026", "department": "OPD", "doctor": "Dr. R. Jayasinghe", "diagnosis": "Hypertension" },
+    { "visitId": "V-1003", "barcode": "CSTH-000103", "date": "20/09/2026", "department": "OPD", "doctor": "Dr. A. Silva", "diagnosis": "Viral fever" },
+    { "visitId": "V-1004", "barcode": "CSTH-000101", "date": "03/10/2026", "department": "Medical Clinic", "doctor": "Dr. A. Silva", "diagnosis": "Type 2 diabetes follow-up" }
+  ],
+  "labs": [
+    { "labId": "L-5001", "barcode": "CSTH-000101", "visitId": "V-1001", "testCode": "FBS", "value": 168, "unit": "mg/dL", "takenAt": "05/09/2026 08:30" },
+    { "labId": "L-5002", "barcode": "CSTH-000102", "visitId": "V-1002", "testCode": "LIPID-TC", "value": 230, "unit": "mg/dL", "takenAt": "12/09/2026 09:10" },
+    { "labId": "L-5003", "barcode": "CSTH-000101", "visitId": "V-1004", "testCode": "HBA1C", "value": 7.4, "unit": "%", "takenAt": "03/10/2026 08:45" }
+  ],
+  "prescriptions": [
+    { "rxId": "RX-9001", "barcode": "CSTH-000101", "visitId": "V-1001", "drug": "Metformin", "dose": "500 mg", "frequency": "twice daily", "days": 30 },
+    { "rxId": "RX-9002", "barcode": "CSTH-000102", "visitId": "V-1002", "drug": "Losartan", "dose": "50 mg", "frequency": "once daily", "days": 30 },
+    { "rxId": "RX-9003", "barcode": "CSTH-000103", "visitId": "V-1003", "drug": "Paracetamol", "dose": "500 mg", "frequency": "three times daily", "days": 3 }
+  ]
+}
