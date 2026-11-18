@@ -6,7 +6,7 @@ service /bridge on new http:Listener(9090) {
         return {status: "ok", name: "HealthBridge bridge"};
     }
 
-    // One PHN -> one FHIR Bundle with records from every hospital
+    // Live view straight from the hospitals (useful for debugging)
     resource function get patients/[string phn]/fhir() returns json|http:NotFound|error {
         APatientFull? a = check fetchHospitalA(phn);
         BData? b = check fetchHospitalB(phn);
@@ -14,5 +14,20 @@ service /bridge on new http:Listener(9090) {
             return http:NOT_FOUND;
         }
         return buildBundle(phn, a, b);
+    }
+
+    // Pull fresh data from all hospitals into the database
+    resource function post admin/sync() returns json|error {
+        return syncAll();
+    }
+
+    // Fast timeline read from the database
+    resource function get patients/[string phn]/timeline() returns json|http:NotFound|error {
+        json[] resources = check readTimeline(phn);
+        if resources.length() == 0 {
+            return http:NOT_FOUND;
+        }
+        json[] entry = from json r in resources select {"resource": r};
+        return {resourceType: "Bundle", "type": "collection", total: entry.length(), entry};
     }
 }
