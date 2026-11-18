@@ -1,0 +1,22 @@
+{
+  "patients": [
+    { "mrn": "B-77801", "personalHealthNo": "09900000011", "firstName": "Nimal", "lastName": "Perera", "birthDate": "1985-03-14", "sex": "male", "allergyList": "Penicillin" },
+    { "mrn": "B-77802", "personalHealthNo": "09900000037", "firstName": "Mohamed", "lastName": "Rizwan", "birthDate": "1990-07-21", "sex": "male", "allergyList": "Sulfonamides" },
+    { "mrn": "B-77803", "personalHealthNo": "09900000052", "firstName": "Dilani", "lastName": "Wickramasinghe", "birthDate": "1966-12-30", "sex": "female", "allergyList": "" }
+  ],
+  "encounters": [
+    { "encounterNo": "E-3001", "mrn": "B-77801", "startedAt": "2026-10-18T10:15:00+05:30", "unit": "Endocrinology", "consultant": "Dr. P. Gunawardena", "primaryDiagnosis": "Diabetes mellitus type 2" },
+    { "encounterNo": "E-3002", "mrn": "B-77802", "startedAt": "2026-10-25T14:40:00+05:30", "unit": "Emergency", "consultant": "Dr. S. Rahman", "primaryDiagnosis": "Asthma exacerbation" },
+    { "encounterNo": "E-3003", "mrn": "B-77803", "startedAt": "2026-11-02T09:00:00+05:30", "unit": "Cardiology", "consultant": "Dr. N. Mendis", "primaryDiagnosis": "Stable angina" }
+  ],
+  "labResults": [
+    { "mrn": "B-77801", "test": "Fasting Blood Sugar", "result": 8.9, "units": "mmol/L", "date": "2026-10-18" },
+    { "mrn": "B-77801", "test": "Serum Creatinine", "result": 1.1, "units": "mg/dL", "date": "2026-10-18" },
+    { "mrn": "B-77803", "test": "Total Cholesterol", "result": 6.4, "units": "mmol/L", "date": "2026-11-02" }
+  ],
+  "medications": [
+    { "orderId": "M-44001", "mrn": "B-77801", "encounterNo": "E-3001", "medication": "Metformin 850mg", "instructions": "1 tab BD x 30 days" },
+    { "orderId": "M-44002", "mrn": "B-77802", "encounterNo": "E-3002", "medication": "Salbutamol inhaler 100mcg", "instructions": "2 puffs PRN" },
+    { "orderId": "M-44003", "mrn": "B-77803", "encounterNo": "E-3003", "medication": "Aspirin 75mg", "instructions": "1 tab OD x 90 days" }
+  ]
+}
