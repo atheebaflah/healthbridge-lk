@@ -13,6 +13,7 @@ name = "bridge"
 version = "0.1.0"
 dependencies = [
 	{org = "ballerina", name = "http"},
+	{org = "ballerina", name = "jwt"},
 	{org = "ballerina", name = "otel"},
 	{org = "ballerina", name = "sql"},
 	{org = "ballerina", name = "time"},
@@ -144,6 +145,9 @@ dependencies = [
 	{org = "ballerina", name = "lang.string"},
 	{org = "ballerina", name = "log"},
 	{org = "ballerina", name = "time"}
+]
+modules = [
+	{org = "ballerina", packageName = "jwt", moduleName = "jwt"}
 ]
 
 [[package]]

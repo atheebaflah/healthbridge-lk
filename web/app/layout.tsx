@@ -11,8 +11,8 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html lang="en">
       <body className="bg-slate-50 text-slate-900 antialiased">
-        <AsgardeoProvider>{children}</AsgardeoProvider>
-        
+       <AsgardeoProvider preferences={{ theme: { inheritFromBranding: false } }}>{children}</AsgardeoProvider>
+
       </body>
     </html>
   );
