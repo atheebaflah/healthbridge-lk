@@ -25,6 +25,7 @@ CREATE TABLE consent (
     phn          VARCHAR(20)  NOT NULL,
     grantee_type VARCHAR(20)  NOT NULL CHECK (grantee_type IN ('doctor', 'pharmacy', 'agent')),
     grantee_id   VARCHAR(100) NOT NULL,
+    grantee_name VARCHAR(200),
     scopes       TEXT[]       NOT NULL,
     status       VARCHAR(20)  NOT NULL DEFAULT 'pending'
                  CHECK (status IN ('pending', 'active', 'denied', 'revoked', 'expired')),
@@ -40,6 +41,7 @@ CREATE TABLE access_log (
     id             BIGSERIAL PRIMARY KEY,
     phn            VARCHAR(20)  NOT NULL,
     actor_id       VARCHAR(100) NOT NULL,
+    actor_name     VARCHAR(200),
     actor_role     VARCHAR(20)  NOT NULL,
     action         VARCHAR(50)  NOT NULL,
     resource_types TEXT,

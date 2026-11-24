@@ -64,36 +64,36 @@ export default async function TimelinePage() {
     const sessionId = await client.getSessionId();
     if (!sessionId) redirect('/');
 
-  let accessToken: string;
-  try {
-    accessToken = await client.getAccessToken(sessionId);
-  } catch (e) {
-    console.error('[timeline] getAccessToken failed:', e);
-    return <main className="p-6">Your session expired. Please sign out and sign in again.</main>;
-  }
-  // A JWT always starts with "eyJ"; this prints only the first few characters, never the whole token
-  console.log('[timeline] token starts with:', accessToken?.slice(0, 10));
+    let accessToken: string;
+    try {
+        accessToken = await client.getAccessToken(sessionId);
+    } catch (e) {
+        console.error('[timeline] getAccessToken failed:', e);
+        return <main className="p-6">Your session expired. Please sign out and sign in again.</main>;
+    }
+    // A JWT always starts with "eyJ"; this prints only the first few characters, never the whole token
+    console.log('[timeline] token starts with:', accessToken?.slice(0, 10));
 
-  const res = await fetch(`${BRIDGE_URL}/api/me/timeline`, {
-    headers: { Authorization: `Bearer ${accessToken}` },
-    cache: 'no-store',
-  });
-  const text = await res.text();
-  console.log('[timeline] bridge status:', res.status, '| body length:', text.length);
+    const res = await fetch(`${BRIDGE_URL}/api/me/timeline`, {
+        headers: { Authorization: `Bearer ${accessToken}` },
+        cache: 'no-store',
+    });
+    const text = await res.text();
+    console.log('[timeline] bridge status:', res.status, '| body length:', text.length);
 
-  if (res.status === 403) {
-    return (
-      <main className="mx-auto max-w-md p-6">
-        <p>Your account isn&apos;t linked to a patient record (no PHN or no patient role).</p>
-        <Link href="/" className="text-teal-700">← Home</Link>
-      </main>
-    );
-  }
-  if (!res.ok || !text) {
-    return <main className="p-6">Could not load records (bridge returned {res.status}): {text || '(empty response)'}</main>;
-  }
+    if (res.status === 403) {
+        return (
+            <main className="mx-auto max-w-md p-6">
+                <p>Your account isn&apos;t linked to a patient record (no PHN or no patient role).</p>
+                <Link href="/" className="text-teal-700">← Home</Link>
+            </main>
+        );
+    }
+    if (!res.ok || !text) {
+        return <main className="p-6">Could not load records (bridge returned {res.status}): {text || '(empty response)'}</main>;
+    }
 
-  const bundle: { entry: { resource: FhirResource }[] } = JSON.parse(text);
+    const bundle: { entry: { resource: FhirResource }[] } = JSON.parse(text);
     const resources = bundle.entry.map((e) => e.resource);
     const patient = resources.find((r) => r.resourceType === 'Patient');
     const allergies = resources.filter((r) => r.resourceType === 'AllergyIntolerance');
@@ -114,6 +114,10 @@ export default async function TimelinePage() {
                     </p>
                 )}
             </section>
+            <div className="mt-3 flex gap-4 text-sm">
+                <Link href="/requests" className="font-medium text-teal-700">Access requests</Link>
+                <Link href="/access-log" className="font-medium text-teal-700">Who viewed my records</Link>
+            </div>
 
             <h2 className="mt-6 mb-2 font-semibold">Timeline</h2>
             <ul className="flex flex-col gap-3">

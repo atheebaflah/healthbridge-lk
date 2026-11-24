@@ -1,7 +1,7 @@
 import { asgardeoMiddleware, createRouteMatcher } from '@asgardeo/nextjs/middleware';
 
 // Pages that need login
-const isProtectedRoute = createRouteMatcher(['/timeline(.*)']);
+const isProtectedRoute = createRouteMatcher(['/timeline(.*)', '/doctor(.*)', '/requests(.*)', '/access-log(.*)']);
 
 export const proxy = asgardeoMiddleware(async (asgardeo, req) => {
   if (isProtectedRoute(req)) {

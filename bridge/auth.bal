@@ -7,6 +7,7 @@ final string asgardeoIssuer = string `https://api.asgardeo.io/t/${asgardeoOrg}/o
 final string asgardeoJwksUrl = string `https://api.asgardeo.io/t/${asgardeoOrg}/oauth2/jwks`;
 
 type UserContext record {|
+    string name;
     string sub;
     string? phn;
     string[] roles;
@@ -37,5 +38,8 @@ function userFromToken(string authHeader) returns UserContext|error {
             }
         }
     }
-    return {sub: payload?.sub ?: "", phn, roles};
+    anydata given = payload["given_name"];
+    anydata family = payload["family_name"];
+    string name = string `${given is string ? given : ""} ${family is string ? family : ""}`.trim();
+    return {sub: payload?.sub ?: "", phn, roles, name};
 }
