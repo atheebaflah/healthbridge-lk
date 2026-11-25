@@ -150,6 +150,81 @@ service /api on bridgeListener {
             consent: {scopes: consent.scopes, expiresAt: consent.expiresAt}
         };
     }
+        // ===== Prescriptions: doctor =====
+    resource function post prescriptions(@http:Header {name: "Authorization"} string? authHeader,
+            @http:Payload PrescriptionBody body)
+            returns http:Created|http:BadRequest|http:Forbidden|http:Unauthorized|error {
+        UserContext|http:Unauthorized|http:Forbidden doctor = check requireRole(authHeader, "doctor");
+        if doctor !is UserContext {
+            return doctor;
+        }
+        // A doctor can only prescribe for a patient who has given them active consent
+        ConsentRow? consent = check findActiveConsent(body.phn, doctor.sub);
+        if consent is () {
+            return <http:Forbidden>{body: {message: "You need active consent from this patient to prescribe"}};
+        }
+        PrescriptionRow|error rx = createPrescription(body.phn, doctor.sub, doctor.name, body.medication,
+            body.dosage, body.quantity, body.validDays);
+        if rx is error {
+            return <http:BadRequest>{body: {message: rx.message()}};
+        }
+        return <http:Created>{body: rx};
+    }
+
+    resource function get doctor/prescriptions(@http:Header {name: "Authorization"} string? authHeader)
+            returns PrescriptionRow[]|http:Forbidden|http:Unauthorized|error {
+        UserContext|http:Unauthorized|http:Forbidden doctor = check requireRole(authHeader, "doctor");
+        if doctor !is UserContext {
+            return doctor;
+        }
+        return listDoctorPrescriptions(doctor.sub);
+    }
+
+    // ===== Prescriptions: patient =====
+    resource function get me/prescriptions(@http:Header {name: "Authorization"} string? authHeader)
+            returns PrescriptionRow[]|http:Forbidden|http:Unauthorized|error {
+        string|http:Unauthorized|http:Forbidden phn = check patientPhn(authHeader);
+        if phn !is string {
+            return phn;
+        }
+        return listPatientPrescriptions(phn);
+    }
+
+    // ===== Prescriptions: pharmacy =====
+    resource function get pharmacy/prescriptions/[string token](@http:Header {name: "Authorization"} string? authHeader)
+            returns json|http:NotFound|http:Forbidden|http:Unauthorized|error {
+        UserContext|http:Unauthorized|http:Forbidden pharmacist = check requireRole(authHeader, "pharmacist");
+        if pharmacist !is UserContext {
+            return pharmacist;
+        }
+        PrescriptionRow? rx = check getPrescriptionByToken(token);
+        if rx is () {
+            return <http:NotFound>{body: {message: "Prescription not found"}};
+        }
+        check logAccess(rx.phn, pharmacist.sub, pharmacist.name, "pharmacist", "view-prescription",
+            "medications", "allow", rx.id);
+        return {prescription: rx.toJson(), patientName: patientName(rx.phn)};
+    }
+
+    resource function post pharmacy/prescriptions/[string token]/dispense(
+            @http:Header {name: "Authorization"} string? authHeader)
+            returns json|http:NotFound|http:Conflict|http:Forbidden|http:Unauthorized|error {
+        UserContext|http:Unauthorized|http:Forbidden pharmacist = check requireRole(authHeader, "pharmacist");
+        if pharmacist !is UserContext {
+            return pharmacist;
+        }
+        PrescriptionRow? rx = check getPrescriptionByToken(token);
+        if rx is () {
+            return <http:NotFound>{body: {message: "Prescription not found"}};
+        }
+        boolean ok = check dispensePrescription(token, pharmacist.sub, pharmacist.name);
+        if !ok {
+            return <http:Conflict>{body: {message: "This prescription was already dispensed or has expired"}};
+        }
+        check logAccess(rx.phn, pharmacist.sub, pharmacist.name, "pharmacist", "dispense-prescription",
+            "medications", "allow", rx.id);
+        return {id: rx.id, status: "dispensed"};
+    }
 }
 
 // ---------- Helpers for the API ----------
@@ -158,6 +233,14 @@ type ConsentRequestBody record {|
     string[] scopes;
     int durationDays;
 
+|};
+
+type PrescriptionBody record {|
+    string phn;
+    string medication;
+    string dosage;
+    string? quantity = ();
+    int validDays = 30;
 |};
 
 function requireRole(string? authHeader, string role) returns UserContext|http:Unauthorized|http:Forbidden|error {

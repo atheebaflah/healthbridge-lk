@@ -45,6 +45,9 @@ export default async function DoctorPage({
   const { error, sent } = await searchParams;
   const reqRes = await bridgeFetch('/api/doctor/requests');
   const requests: ConsentRow[] = reqRes.ok ? await reqRes.json() : [];
+  const rxRes = await bridgeFetch('/api/doctor/prescriptions');
+const prescriptions: { id: string; phn: string; medication: string; status: string; createdAt: string }[] =
+  rxRes.ok ? await rxRes.json() : [];
 
   return (
     <main className="mx-auto max-w-2xl p-6">
@@ -137,6 +140,21 @@ export default async function DoctorPage({
           </ul>
         )}
       </section>
+      <section className="mt-6">
+  <h2 className="mb-2 font-semibold">Prescriptions I&apos;ve written</h2>
+  {prescriptions.length === 0 ? (
+    <p className="text-sm text-slate-500">None yet.</p>
+  ) : (
+    <ul className="flex flex-col gap-2">
+      {prescriptions.map((p) => (
+        <li key={p.id} className="flex items-center justify-between rounded-lg bg-white px-4 py-2 text-sm shadow-sm">
+          <span>{p.id} · {p.medication} · PHN {p.phn}</span>
+          <span className="text-slate-500">{p.status}</span>
+        </li>
+      ))}
+    </ul>
+  )}
+</section>
     </main>
   );
 }

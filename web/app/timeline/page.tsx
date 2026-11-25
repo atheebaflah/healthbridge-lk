@@ -114,9 +114,10 @@ export default async function TimelinePage() {
                     </p>
                 )}
             </section>
-            <div className="mt-3 flex gap-4 text-sm">
-                <Link href="/requests" className="font-medium text-teal-700">Access requests</Link>
-                <Link href="/access-log" className="font-medium text-teal-700">Who viewed my records</Link>
+            <div className="mt-3 flex flex-wrap gap-4 text-sm">
+            <Link href="/requests" className="font-medium text-teal-700">Access requests</Link>
+            <Link href="/access-log" className="font-medium text-teal-700">Who viewed my records</Link>
+            <Link href="/prescriptions" className="font-medium text-teal-700">My prescriptions</Link>
             </div>
 
             <h2 className="mt-6 mb-2 font-semibold">Timeline</h2>

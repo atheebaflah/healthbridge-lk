@@ -68,3 +68,21 @@ CREATE TABLE prescription_dispense (
     pharmacy_id           VARCHAR(100) NOT NULL,
     dispensed_at          TIMESTAMPTZ  NOT NULL DEFAULT now()
 );
+-- E-prescriptions written by doctors; dispensed once by a pharmacy
+CREATE TABLE e_prescription (
+    id            VARCHAR(40)  PRIMARY KEY,
+    phn           VARCHAR(20)  NOT NULL,
+    doctor_id     VARCHAR(100) NOT NULL,
+    doctor_name   VARCHAR(200) NOT NULL,
+    medication    VARCHAR(200) NOT NULL,
+    dosage        VARCHAR(300) NOT NULL,
+    quantity      VARCHAR(50),
+    qr_token      VARCHAR(80)  NOT NULL UNIQUE,
+    status        VARCHAR(20)  NOT NULL DEFAULT 'active'
+                  CHECK (status IN ('active', 'dispensed', 'cancelled')),
+    created_at    TIMESTAMPTZ  NOT NULL DEFAULT now(),
+    expires_at    TIMESTAMPTZ  NOT NULL,
+    dispensed_at  TIMESTAMPTZ,
+    pharmacy_id   VARCHAR(100),
+    pharmacy_name VARCHAR(200)
+);

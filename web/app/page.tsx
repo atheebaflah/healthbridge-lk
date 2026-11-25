@@ -17,6 +17,9 @@ export default function Home() {
         <Link href="/doctor" className="rounded-lg border border-teal-700 px-6 py-3 font-medium text-teal-700">
           Doctor portal
         </Link>
+        <Link href="/pharmacy" className="rounded-lg border border-teal-700 px-6 py-3 font-medium text-teal-700">
+          Pharmacy
+        </Link>
         <div className="flex flex-col gap-3">
           <Link href="/timeline" className="rounded-lg bg-teal-700 px-6 py-3 font-medium text-white">
             View my health timeline
