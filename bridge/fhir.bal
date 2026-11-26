@@ -1,5 +1,6 @@
 // Placeholder identifier systems for this demo (not official Sri Lankan URIs)
 const PHN_SYSTEM = "urn:healthbridge:lk:phn";
+const BLOOD_GROUP_EXT = "urn:healthbridge:blood-group";
 
 // ---------- Small helpers ----------
 
@@ -113,12 +114,14 @@ function buildBundle(string phn, APatientFull? a, BData? b) returns json {
     string gender = "unknown";
     string birthDate = "";
     string[] allergies = [];
+    string? bloodGroup = ();
 
     if a is APatientFull {
         identifiers.push({system: "urn:healthbridge:hospital-a:barcode", value: a.barcode});
         name = a.fullName;
         gender = a.gender == "M" ? "male" : (a.gender == "F" ? "female" : "unknown");
         birthDate = dmyToIso(a.dob);
+        bloodGroup = a?.bloodGroup;
         foreach string al in a.allergies {
             allergies.push(al);
         }
@@ -176,13 +179,19 @@ function buildBundle(string phn, APatientFull? a, BData? b) returns json {
         }
     }
 
+    json[] extensions = [];
+    if bloodGroup is string {
+        extensions.push({url: BLOOD_GROUP_EXT, valueString: bloodGroup});
+    }
+
     json patient = {
         resourceType: "Patient",
         id: phn,
         identifier: identifiers,
         name: [{text: name}],
         gender,
-        birthDate
+        birthDate,
+        extension: extensions
     };
 
     json[] entry = [{"resource": patient}];

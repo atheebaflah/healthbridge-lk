@@ -94,6 +94,12 @@ export default async function TimelinePage() {
     }
 
     const bundle: { entry: { resource: FhirResource }[] } = JSON.parse(text);
+    const emRes = await fetch(`${BRIDGE_URL}/api/me/emergency-access`, {
+        headers: { Authorization: `Bearer ${accessToken}` },
+        cache: 'no-store',
+    });
+    const emergencies: { id: number; staffName: string; reason: string; startedAt: string }[] =
+        emRes.ok ? await emRes.json() : [];
     const resources = bundle.entry.map((e) => e.resource);
     const patient = resources.find((r) => r.resourceType === 'Patient');
     const allergies = resources.filter((r) => r.resourceType === 'AllergyIntolerance');
@@ -102,7 +108,16 @@ export default async function TimelinePage() {
     return (
         <main className="mx-auto max-w-md p-4">
             <Link href="/" className="text-sm text-teal-700">← Home</Link>
-
+            {emergencies.length > 0 && (
+                <div className="mt-3 rounded-xl border-2 border-red-300 bg-red-50 p-4 text-sm text-red-800">
+                    <p className="font-semibold">Emergency access to your records</p>
+                    {emergencies.map((e) => (
+                        <p key={e.id} className="mt-1">
+                            {e.startedAt.slice(0, 16)} · {e.staffName}: {e.reason}
+                        </p>
+                    ))}
+                </div>
+            )}
             <section className="mt-3 rounded-xl bg-white p-4 shadow-sm">
                 <h1 className="text-xl font-bold">{patient?.name?.[0]?.text}</h1>
                 <p className="text-sm text-slate-500">
@@ -115,9 +130,9 @@ export default async function TimelinePage() {
                 )}
             </section>
             <div className="mt-3 flex flex-wrap gap-4 text-sm">
-            <Link href="/requests" className="font-medium text-teal-700">Access requests</Link>
-            <Link href="/access-log" className="font-medium text-teal-700">Who viewed my records</Link>
-            <Link href="/prescriptions" className="font-medium text-teal-700">My prescriptions</Link>
+                <Link href="/requests" className="font-medium text-teal-700">Access requests</Link>
+                <Link href="/access-log" className="font-medium text-teal-700">Who viewed my records</Link>
+                <Link href="/prescriptions" className="font-medium text-teal-700">My prescriptions</Link>
             </div>
 
             <h2 className="mt-6 mb-2 font-semibold">Timeline</h2>

@@ -16,6 +16,7 @@ export type FhirResource = {
   serviceType?: { text?: string };
   participant?: { individual?: { display?: string } }[];
   reasonCode?: { text?: string }[];
+    extension?: { url?: string; valueString?: string }[];
 };
 
 export type FhirBundle = {
@@ -68,4 +69,7 @@ export function scopeLabels(csv: string) {
     .split(',')
     .map((s) => SCOPES.find((x) => x.value === s)?.label ?? s)
     .join(', ');
+}
+export function bloodGroup(patient?: FhirResource) {
+  return patient?.extension?.find((e) => e.url === 'urn:healthbridge:blood-group')?.valueString;
 }

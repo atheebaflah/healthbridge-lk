@@ -43,14 +43,16 @@ export default async function AccessLogPage() {
                                 {r.decision === 'allow' ? 'Allowed' : 'Blocked'}
                             </span>
                         </div>
-                        <p className="text-sm text-slate-600">
+                        <p className={`text-sm ${r.action === 'emergency-access' ? 'font-semibold text-red-700' : 'text-slate-600'}`}>
                             {r.decision !== 'allow'
                                 ? r.reason ?? 'Access denied'
-                                : r.action === 'dispense-prescription'
-                                    ? `Dispensed prescription ${r.reason ?? ''}`
-                                    : r.action === 'view-prescription'
-                                        ? `Checked prescription ${r.reason ?? ''}`
-                                        : `Viewed: ${scopeLabels(r.resourceTypes ?? '')}`}
+                                : r.action === 'emergency-access'
+                                    ? `EMERGENCY access: ${r.reason ?? ''}`
+                                    : r.action === 'dispense-prescription'
+                                        ? `Dispensed prescription ${r.reason ?? ''}`
+                                        : r.action === 'view-prescription'
+                                            ? `Checked prescription ${r.reason ?? ''}`
+                                            : `Viewed: ${scopeLabels(r.resourceTypes ?? '')}`}
                         </p>
                         <p className="text-xs text-slate-500">{r.at.slice(0, 16)}</p>
                     </li>

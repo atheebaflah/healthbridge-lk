@@ -40,6 +40,7 @@ type APatientFull record {
     AVisit[] visits;
     ALab[] labs;
     APrescription[] prescriptions;
+    string bloodGroup?;
 };
 
 // ---------- Hospital B ----------

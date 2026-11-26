@@ -56,6 +56,7 @@ CREATE TABLE emergency_access (
     id              BIGSERIAL PRIMARY KEY,
     phn             VARCHAR(20)  NOT NULL,
     staff_id        VARCHAR(100) NOT NULL,
+    staff_name      VARCHAR(200),
     reason          TEXT         NOT NULL,
     started_at      TIMESTAMPTZ  NOT NULL DEFAULT now(),
     ends_at         TIMESTAMPTZ  NOT NULL,

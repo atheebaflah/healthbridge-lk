@@ -225,6 +225,44 @@ service /api on bridgeListener {
             "medications", "allow", rx.id);
         return {id: rx.id, status: "dispensed"};
     }
+        // ===== Emergency (break-glass) =====
+    resource function post emergency/[string phn](@http:Header {name: "Authorization"} string? authHeader,
+            @http:Payload EmergencyBody body)
+            returns EmergencyRow|http:BadRequest|http:Forbidden|http:Unauthorized|error {
+        UserContext|http:Unauthorized|http:Forbidden staff = check requireRole(authHeader, "emergency");
+        if staff !is UserContext {
+            return staff;
+        }
+        EmergencyRow|error row = startEmergencyAccess(phn, staff.sub, staff.name, body.reason);
+        if row is error {
+            return <http:BadRequest>{body: {message: row.message()}};
+        }
+        check logAccess(phn, staff.sub, staff.name, "emergency", "emergency-access", "critical", "allow", body.reason);
+        return row;
+    }
+
+    resource function get emergency/[string phn](@http:Header {name: "Authorization"} string? authHeader)
+            returns json|http:Forbidden|http:Unauthorized|error {
+        UserContext|http:Unauthorized|http:Forbidden staff = check requireRole(authHeader, "emergency");
+        if staff !is UserContext {
+            return staff;
+        }
+        EmergencyRow? access = check findActiveEmergency(phn, staff.sub);
+        if access is () {
+            return <http:Forbidden>{body: {message: "Start emergency access (with a reason) first"}};
+        }
+        json summary = check emergencySummary(phn);
+        return {access: access.toJson(), summary};
+    }
+
+    resource function get me/emergency\-access(@http:Header {name: "Authorization"} string? authHeader)
+            returns EmergencyRow[]|http:Forbidden|http:Unauthorized|error {
+        string|http:Unauthorized|http:Forbidden phn = check patientPhn(authHeader);
+        if phn !is string {
+            return phn;
+        }
+        return listEmergencyForPatient(phn);
+    }
 }
 
 // ---------- Helpers for the API ----------
@@ -241,6 +279,9 @@ type PrescriptionBody record {|
     string dosage;
     string? quantity = ();
     int validDays = 30;
+|};
+type EmergencyBody record {|
+    string reason;
 |};
 
 function requireRole(string? authHeader, string role) returns UserContext|http:Unauthorized|http:Forbidden|error {

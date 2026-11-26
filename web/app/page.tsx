@@ -26,6 +26,9 @@ export default function Home() {
           </Link>
           <SignOutButton className="rounded-lg border border-slate-300 px-6 py-3" />
         </div>
+        <Link href="/emergency" className="rounded-lg border border-red-700 px-6 py-3 font-medium text-red-700">
+          Emergency access
+        </Link>
       </SignedIn>
 
       <p className="text-xs text-slate-400">Demo project. All data is fake.</p>
